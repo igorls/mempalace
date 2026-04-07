@@ -65,6 +65,9 @@ def cmd_init(args):
 
 def cmd_mine(args):
     palace_path = os.path.expanduser(args.palace) if args.palace else MempalaceConfig().palace_path
+    include_ignored = []
+    for raw in args.include_ignored or []:
+        include_ignored.extend(part.strip() for part in raw.split(",") if part.strip())
 
     if args.mode == "convos":
         from .convo_miner import mine_convos
@@ -88,6 +91,8 @@ def cmd_mine(args):
             agent=args.agent,
             limit=args.limit,
             dry_run=args.dry_run,
+            respect_gitignore=not args.no_gitignore,
+            include_ignored=include_ignored,
         )
 
 
@@ -359,6 +364,17 @@ def main():
         help="Ingest mode: 'projects' for code/docs (default), 'convos' for chat exports",
     )
     p_mine.add_argument("--wing", default=None, help="Wing name (default: directory name)")
+    p_mine.add_argument(
+        "--no-gitignore",
+        action="store_true",
+        help="Don't respect .gitignore files when scanning project files",
+    )
+    p_mine.add_argument(
+        "--include-ignored",
+        action="append",
+        default=[],
+        help="Always scan these project-relative paths even if ignored; repeat or pass comma-separated paths",
+    )
     p_mine.add_argument(
         "--agent",
         default="mempalace",
