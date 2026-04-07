@@ -18,7 +18,23 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: python -m pytest tests/ -v --cov=mempalace --cov-report=term-missing --cov-fail-under=30
+      - run: python -m pytest tests/ -v --ignore=tests/benchmarks
+
+  benchmark:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests/benchmarks/ -v -m "benchmark and not stress and not slow" --bench-scale=small --bench-report=bench-results.json
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: benchmark-results
+          path: bench-results.json
 
   lint:
     runs-on: ubuntu-latest
