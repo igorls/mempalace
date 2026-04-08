@@ -1,6 +1,6 @@
 # MemPalace Scale Benchmark Suite
 
-94 tests that benchmark mempalace at scale to validate real-world performance limits.
+106 tests that benchmark mempalace at scale to validate real-world performance limits.
 
 ## Why
 
@@ -11,6 +11,7 @@ MemPalace has strong academic scores (96.6% R@5 on LongMemEval) but no empirical
 - Modified files are never re-ingested — what's the skip-check cost at scale?
 - How does query latency degrade as the palace grows from 1K to 100K drawers?
 - Does wing/room filtering actually improve retrieval, and by how much?
+- At what per-room drawer count does recall break regardless of filtering?
 
 This suite finds those answers.
 
@@ -20,7 +21,7 @@ This suite finds those answers.
 # Fast smoke test (~2 min)
 uv run pytest tests/benchmarks/ -v --bench-scale=small -m "benchmark and not slow"
 
-# Full small scale (~30 min)
+# Full small scale (~35 min)
 uv run pytest tests/benchmarks/ -v --bench-scale=small
 
 # Medium scale with JSON report
@@ -61,6 +62,7 @@ uv run pytest tests/benchmarks/ -v --bench-scale=stress -m stress
 | File | What it tests |
 |------|--------------|
 | `test_palace_boost.py` | Retrieval improvement from wing/room filtering at different scales |
+| `test_recall_threshold.py` | Per-room recall ceiling — isolates embedding model limit with all drawers in one bucket |
 | `test_knowledge_graph_bench.py` | Triple insertion rate, temporal query accuracy, SQLite concurrent access |
 | `test_layers_bench.py` | MemoryStack wake-up cost, Layer1 unbounded fetch, token budget compliance |
 
@@ -68,10 +70,10 @@ uv run pytest tests/benchmarks/ -v --bench-scale=stress -m stress
 
 ```
 tests/benchmarks/
-  conftest.py          # --bench-scale / --bench-report CLI options, fixtures, markers
-  data_generator.py    # Deterministic data factory (seeded RNG, planted needles)
-  report.py            # JSON report writer + regression checker
-  test_*.py            # 8 test modules (94 tests total)
+  conftest.py              # --bench-scale / --bench-report CLI options, fixtures, markers
+  data_generator.py        # Deterministic data factory (seeded RNG, planted needles)
+  report.py                # JSON report writer + regression checker
+  test_*.py                # 9 test modules (106 tests total)
 ```
 
 ### Data Generator
