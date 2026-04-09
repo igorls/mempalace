@@ -9,6 +9,10 @@
 
 | # | Title | Labels | PR |
 |---|-------|--------|-----|
+| **397** | **ARM64 segfault mitigation is a no-op — ORT_DISABLE_COREML not a real ONNX RT env var** | bug | — |
+| **396** | **OOM crash on large transcript files — split_mega_files.py and normalize.py load entire file** | bug | — |
+| **395** | **cmd_repair infinite recursion when palace_path has trailing slash — fills disk** | bug | — |
+| **394** | **MCP server hangs when client sends null arguments — unhandled AttributeError** | bug | — |
 | 357 | Parallel mining corrupts ChromaDB HNSW index — no warning, silent failure | — | — |
 | 344 | HNSW index bloat: link_lists.bin grows to 441GB when mining >10K drawers | — | #346 |
 | 339 | Silent `except Exception: pass` in MCP tools hides errors from callers | bug | #371 |
@@ -199,14 +203,14 @@ Cross-reference of validated findings from `docs/r1.md` and `docs/r2.md` against
 | MCP error hardening (partial coverage of null args) | — | **#181** | PR open (read-only mode, not null-arg fix specifically) |
 | Security hardening (partial coverage of delete auth) | — | **#175** | PR open (auth/encryption, broad scope) |
 
-### NOT covered — recommend filing new issues
+### Filed as new issues (2026-04-09)
 
-| Finding | Severity | Description |
-|---------|----------|-------------|
-| **MCP hangs on `null` arguments** | CRITICAL | `params.get("arguments", {})` returns `None` when payload has `"arguments": null`. Type coercion loop throws outside error handler. Client hangs forever. |
-| **`cmd_repair` infinite recursion** | HIGH | Trailing slash in palace_path causes `shutil.copytree` to copy directory into itself until disk fills. |
-| **OOM on mega-files** | HIGH | `split_mega_files.py` and `normalize.py` load entire file into memory; multi-GB exports crash with `MemoryError`. |
-| **`ORT_DISABLE_COREML` is a no-op** | HIGH | The ARM64 segfault mitigation at `__init__.py:19` sets an env var that ONNX Runtime doesn't read. The fix is non-functional. |
+| Finding | Severity | Issue |
+|---------|----------|-------|
+| MCP hangs on `null` arguments | CRITICAL | [#394](https://github.com/milla-jovovich/mempalace/issues/394) |
+| `cmd_repair` infinite recursion on trailing-slash paths | HIGH | [#395](https://github.com/milla-jovovich/mempalace/issues/395) |
+| OOM on large transcript files in `split_mega_files.py` and `normalize.py` | HIGH | [#396](https://github.com/milla-jovovich/mempalace/issues/396) |
+| `ORT_DISABLE_COREML` ARM64 mitigation is a no-op | HIGH | [#397](https://github.com/milla-jovovich/mempalace/issues/397) |
 
 ### Low-priority findings (no issue needed)
 
