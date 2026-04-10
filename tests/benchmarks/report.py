@@ -45,16 +45,45 @@ def check_regression(current_report: str, baseline_report: str, threshold: float
         baseline = json.load(f)
 
     regressions = []
-    # Metrics where HIGHER is worse (latency, memory, etc.)
-    higher_is_worse = {
-        "latency", "rss", "memory", "oom", "lock_failures", "elapsed",
-        "p50_ms", "p95_ms", "p99_ms", "rss_delta_mb", "peak_rss_mb",
-    }
-    # Metrics where LOWER is worse (throughput, recall, etc.)
-    lower_is_worse = {
-        "recall", "throughput", "per_sec", "files_per_sec", "drawers_per_sec",
-        "triples_per_sec", "improvement",
-    }
+    # Keywords for metric direction — checked in order, first match wins.
+    # "improvement" is checked before "latency" so that composite names
+    # like "latency_improvement_pct" are classified correctly.
+    _higher_is_better_kw = [
+        "improvement",
+        "recall",
+        "throughput",
+        "per_sec",
+        "files_per_sec",
+        "drawers_per_sec",
+        "triples_per_sec",
+        "speedup",
+    ]
+    _higher_is_worse_kw = [
+        "latency",
+        "rss",
+        "memory",
+        "oom",
+        "lock_failures",
+        "elapsed",
+        "p50_ms",
+        "p95_ms",
+        "p99_ms",
+        "rss_delta_mb",
+        "peak_rss_mb",
+        "errors",
+        "failures",
+    ]
+
+    def _metric_direction(name: str) -> str:
+        """Return 'higher_better', 'higher_worse', or 'unknown'."""
+        low = name.lower()
+        for kw in _higher_is_better_kw:
+            if kw in low:
+                return "higher_better"
+        for kw in _higher_is_worse_kw:
+            if kw in low:
+                return "higher_worse"
+        return "unknown"
 
     for category in baseline.get("results", {}):
         if category not in current.get("results", {}):
@@ -68,23 +97,21 @@ def check_regression(current_report: str, baseline_report: str, threshold: float
             if base_val == 0:
                 continue
 
-            # Determine direction
-            is_latency_like = any(kw in metric.lower() for kw in higher_is_worse)
-            is_throughput_like = any(kw in metric.lower() for kw in lower_is_worse)
+            direction = _metric_direction(metric)
 
-            if is_latency_like:
+            if direction == "higher_worse":
                 # Higher is worse — check if current exceeds baseline by threshold
                 if curr_val > base_val * (1 + threshold):
                     pct = ((curr_val - base_val) / base_val) * 100
                     regressions.append(
-                        f"{category}/{metric}: {base_val:.2f} -> {curr_val:.2f} ({pct:+.1f}%, threshold {threshold*100:.0f}%)"
+                        f"{category}/{metric}: {base_val:.2f} -> {curr_val:.2f} ({pct:+.1f}%, threshold {threshold * 100:.0f}%)"
                     )
-            elif is_throughput_like:
+            elif direction == "higher_better":
                 # Lower is worse — check if current is below baseline by threshold
                 if curr_val < base_val * (1 - threshold):
                     pct = ((curr_val - base_val) / base_val) * 100
                     regressions.append(
-                        f"{category}/{metric}: {base_val:.2f} -> {curr_val:.2f} ({pct:+.1f}%, threshold {threshold*100:.0f}%)"
+                        f"{category}/{metric}: {base_val:.2f} -> {curr_val:.2f} ({pct:+.1f}%, threshold {threshold * 100:.0f}%)"
                     )
 
     return regressions

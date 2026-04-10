@@ -125,7 +125,9 @@ class TestChunkThroughput:
         chunks_per_sec = total_chunks / max(elapsed, 0.001)
         kb_per_sec = (len(content) * n_iterations / 1024) / max(elapsed, 0.001)
 
-        record_metric("chunking", f"chunks_per_sec_at_{content_size_kb}kb", round(chunks_per_sec, 1))
+        record_metric(
+            "chunking", f"chunks_per_sec_at_{content_size_kb}kb", round(chunks_per_sec, 1)
+        )
         record_metric("chunking", f"kb_per_sec_at_{content_size_kb}kb", round(kb_per_sec, 1))
 
 
@@ -160,4 +162,8 @@ class TestReingestSkipOverhead:
 
         record_metric("reingest", "skip_check_elapsed_sec", round(skip_elapsed, 2))
         record_metric("reingest", "files_checked", files_written)
-        record_metric("reingest", "skip_check_per_file_ms", round(skip_elapsed * 1000 / max(files_written, 1), 1))
+        record_metric(
+            "reingest",
+            "skip_check_per_file_ms",
+            round(skip_elapsed * 1000 / max(files_written, 1), 1),
+        )

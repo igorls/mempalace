@@ -116,7 +116,9 @@ class TestLayer1UnboundedFetch:
         record_metric("layer1_filter", "unfiltered_ms", round(unfiltered_ms, 1))
         record_metric("layer1_filter", "filtered_ms", round(filtered_ms, 1))
         if unfiltered_ms > 0:
-            record_metric("layer1_filter", "speedup_pct", round((1 - filtered_ms / unfiltered_ms) * 100, 1))
+            record_metric(
+                "layer1_filter", "speedup_pct", round((1 - filtered_ms / unfiltered_ms) * 100, 1)
+            )
 
 
 @pytest.mark.benchmark
@@ -146,7 +148,9 @@ class TestWakeUpTokenBudget:
         record_metric("wakeup_budget", f"tokens_at_{n_drawers}", token_estimate)
         record_metric("wakeup_budget", f"chars_at_{n_drawers}", len(text))
 
-        assert token_estimate < 1200, f"Wake-up exceeded budget: ~{token_estimate} tokens at {n_drawers} drawers"
+        assert (
+            token_estimate < 1200
+        ), f"Wake-up exceeded budget: ~{token_estimate} tokens at {n_drawers} drawers"
 
 
 @pytest.mark.benchmark

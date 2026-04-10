@@ -61,14 +61,16 @@ def _populate_single_room(palace_path, n_drawers, n_needles=10):
         drawer_id = f"drawer_single_room_{hashlib.md5(needle_id.encode()).hexdigest()[:16]}"
         docs.append(content)
         ids.append(drawer_id)
-        metas.append({
-            "wing": "concentrated",
-            "room": "single_room",
-            "source_file": f"needle_{i}.txt",
-            "chunk_index": 0,
-            "added_by": "threshold_bench",
-            "filed_at": datetime.now().isoformat(),
-        })
+        metas.append(
+            {
+                "wing": "concentrated",
+                "room": "single_room",
+                "source_file": f"needle_{i}.txt",
+                "chunk_index": 0,
+                "added_by": "threshold_bench",
+                "filed_at": datetime.now().isoformat(),
+            }
+        )
 
     # Fill with noise — all in the SAME room
     remaining = n_drawers - len(docs)
@@ -77,14 +79,16 @@ def _populate_single_room(palace_path, n_drawers, n_needles=10):
         drawer_id = f"drawer_single_room_{hashlib.md5(f'noise_{i}'.encode()).hexdigest()[:16]}"
         docs.append(content)
         ids.append(drawer_id)
-        metas.append({
-            "wing": "concentrated",
-            "room": "single_room",
-            "source_file": f"noise_{i:06d}.txt",
-            "chunk_index": i % 10,
-            "added_by": "threshold_bench",
-            "filed_at": datetime.now().isoformat(),
-        })
+        metas.append(
+            {
+                "wing": "concentrated",
+                "room": "single_room",
+                "source_file": f"noise_{i:06d}.txt",
+                "chunk_index": i % 10,
+                "added_by": "threshold_bench",
+                "filed_at": datetime.now().isoformat(),
+            }
+        )
 
         if len(docs) >= batch_size:
             col.add(documents=docs, ids=ids, metadatas=metas)

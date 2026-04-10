@@ -36,9 +36,7 @@ class TestTripleInsertionRate:
         # Measure triple insertion
         start = time.perf_counter()
         for subject, predicate, obj, valid_from, valid_to in triples:
-            kg.add_triple(
-                subject, predicate, obj, valid_from=valid_from, valid_to=valid_to
-            )
+            kg.add_triple(subject, predicate, obj, valid_from=valid_from, valid_to=valid_to)
         elapsed = time.perf_counter() - start
 
         triples_per_sec = n_triples / max(elapsed, 0.001)
@@ -128,7 +126,9 @@ class TestTemporalQueryAccuracy:
         kg.add_entity("ProjectB", "project")
 
         # Alice worked on ProjectA from 2024-01 to 2024-06
-        kg.add_triple("Alice", "works_on", "ProjectA", valid_from="2024-01-01", valid_to="2024-06-30")
+        kg.add_triple(
+            "Alice", "works_on", "ProjectA", valid_from="2024-01-01", valid_to="2024-06-30"
+        )
         # Alice worked on ProjectB from 2024-07 onwards
         kg.add_triple("Alice", "works_on", "ProjectB", valid_from="2024-07-01")
 
@@ -145,8 +145,16 @@ class TestTemporalQueryAccuracy:
         # Query Alice as of September 2024 — should find ProjectB
         result_sept = kg.query_entity("Alice", as_of="2024-09-15")
 
-        record_metric("kg_temporal", "march_query_results", len(result_march) if isinstance(result_march, list) else 0)
-        record_metric("kg_temporal", "sept_query_results", len(result_sept) if isinstance(result_sept, list) else 0)
+        record_metric(
+            "kg_temporal",
+            "march_query_results",
+            len(result_march) if isinstance(result_march, list) else 0,
+        )
+        record_metric(
+            "kg_temporal",
+            "sept_query_results",
+            len(result_sept) if isinstance(result_sept, list) else 0,
+        )
 
 
 @pytest.mark.benchmark
@@ -230,7 +238,9 @@ class TestSQLiteConcurrentAccess:
             fails = 0
             for i in range(50):
                 try:
-                    kg.add_triple(f"E_{i % 50}", "new_rel", f"E_{(i + 7) % 50}", valid_from="2025-06-01")
+                    kg.add_triple(
+                        f"E_{i % 50}", "new_rel", f"E_{(i + 7) % 50}", valid_from="2025-06-01"
+                    )
                 except Exception:
                     fails += 1
             write_errors.append(fails)

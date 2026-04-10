@@ -20,42 +20,150 @@ import yaml
 # ── Scale configurations ─────────────────────────────────────────────────
 
 SCALE_CONFIGS = {
-    "small": {"drawers": 1_000, "wings": 3, "rooms_per_wing": 5, "kg_entities": 50, "kg_triples": 200, "needles": 20, "search_queries": 20},
-    "medium": {"drawers": 10_000, "wings": 8, "rooms_per_wing": 12, "kg_entities": 200, "kg_triples": 2_000, "needles": 50, "search_queries": 50},
-    "large": {"drawers": 50_000, "wings": 15, "rooms_per_wing": 20, "kg_entities": 500, "kg_triples": 10_000, "needles": 100, "search_queries": 100},
-    "stress": {"drawers": 100_000, "wings": 25, "rooms_per_wing": 30, "kg_entities": 1_000, "kg_triples": 50_000, "needles": 200, "search_queries": 200},
+    "small": {
+        "drawers": 1_000,
+        "wings": 3,
+        "rooms_per_wing": 5,
+        "kg_entities": 50,
+        "kg_triples": 200,
+        "needles": 20,
+        "search_queries": 20,
+    },
+    "medium": {
+        "drawers": 10_000,
+        "wings": 8,
+        "rooms_per_wing": 12,
+        "kg_entities": 200,
+        "kg_triples": 2_000,
+        "needles": 50,
+        "search_queries": 50,
+    },
+    "large": {
+        "drawers": 50_000,
+        "wings": 15,
+        "rooms_per_wing": 20,
+        "kg_entities": 500,
+        "kg_triples": 10_000,
+        "needles": 100,
+        "search_queries": 100,
+    },
+    "stress": {
+        "drawers": 100_000,
+        "wings": 25,
+        "rooms_per_wing": 30,
+        "kg_entities": 1_000,
+        "kg_triples": 50_000,
+        "needles": 200,
+        "search_queries": 200,
+    },
 }
 
 # ── Vocabulary banks for realistic content ───────────────────────────────
 
 WING_NAMES = [
-    "webapp", "backend_api", "mobile_app", "data_pipeline", "ml_platform",
-    "devops", "auth_service", "payments", "analytics", "docs_site",
-    "cli_tool", "dashboard", "notification_service", "search_engine",
-    "user_mgmt", "inventory", "reporting", "testing_infra", "monitoring",
-    "email_service", "chat_bot", "file_storage", "scheduler", "gateway",
+    "webapp",
+    "backend_api",
+    "mobile_app",
+    "data_pipeline",
+    "ml_platform",
+    "devops",
+    "auth_service",
+    "payments",
+    "analytics",
+    "docs_site",
+    "cli_tool",
+    "dashboard",
+    "notification_service",
+    "search_engine",
+    "user_mgmt",
+    "inventory",
+    "reporting",
+    "testing_infra",
+    "monitoring",
+    "email_service",
+    "chat_bot",
+    "file_storage",
+    "scheduler",
+    "gateway",
     "marketplace",
 ]
 
 ROOM_NAMES = [
-    "backend", "frontend", "api", "database", "auth", "tests", "docs",
-    "config", "deployment", "models", "views", "controllers", "middleware",
-    "utils", "schemas", "migrations", "fixtures", "scripts", "styles",
-    "components", "hooks", "services", "routes", "templates", "static",
-    "media", "logging", "cache", "queue", "workers",
+    "backend",
+    "frontend",
+    "api",
+    "database",
+    "auth",
+    "tests",
+    "docs",
+    "config",
+    "deployment",
+    "models",
+    "views",
+    "controllers",
+    "middleware",
+    "utils",
+    "schemas",
+    "migrations",
+    "fixtures",
+    "scripts",
+    "styles",
+    "components",
+    "hooks",
+    "services",
+    "routes",
+    "templates",
+    "static",
+    "media",
+    "logging",
+    "cache",
+    "queue",
+    "workers",
 ]
 
 TECH_TERMS = [
-    "authentication", "authorization", "middleware", "endpoint", "REST API",
-    "GraphQL", "WebSocket", "database migration", "ORM", "query optimization",
-    "caching strategy", "load balancer", "rate limiting", "pagination",
-    "serialization", "validation", "error handling", "logging framework",
-    "monitoring", "deployment pipeline", "CI/CD", "containerization",
-    "microservice", "event sourcing", "message queue", "pub/sub",
-    "connection pooling", "session management", "token refresh", "CORS",
-    "SSL termination", "health check", "circuit breaker", "retry logic",
-    "batch processing", "stream processing", "data pipeline", "ETL",
-    "feature flag", "A/B testing", "blue-green deployment", "canary release",
+    "authentication",
+    "authorization",
+    "middleware",
+    "endpoint",
+    "REST API",
+    "GraphQL",
+    "WebSocket",
+    "database migration",
+    "ORM",
+    "query optimization",
+    "caching strategy",
+    "load balancer",
+    "rate limiting",
+    "pagination",
+    "serialization",
+    "validation",
+    "error handling",
+    "logging framework",
+    "monitoring",
+    "deployment pipeline",
+    "CI/CD",
+    "containerization",
+    "microservice",
+    "event sourcing",
+    "message queue",
+    "pub/sub",
+    "connection pooling",
+    "session management",
+    "token refresh",
+    "CORS",
+    "SSL termination",
+    "health check",
+    "circuit breaker",
+    "retry logic",
+    "batch processing",
+    "stream processing",
+    "data pipeline",
+    "ETL",
+    "feature flag",
+    "A/B testing",
+    "blue-green deployment",
+    "canary release",
 ]
 
 CODE_SNIPPETS = [
@@ -75,17 +183,51 @@ PROSE_TEMPLATES = [
 ]
 
 ENTITY_NAMES = [
-    "Alice", "Bob", "Carol", "Dave", "Eve", "Frank", "Grace", "Heidi",
-    "Ivan", "Judy", "Karl", "Linda", "Mike", "Nina", "Oscar", "Pat",
-    "Quinn", "Rita", "Steve", "Tina", "Ursula", "Victor", "Wendy", "Xander",
+    "Alice",
+    "Bob",
+    "Carol",
+    "Dave",
+    "Eve",
+    "Frank",
+    "Grace",
+    "Heidi",
+    "Ivan",
+    "Judy",
+    "Karl",
+    "Linda",
+    "Mike",
+    "Nina",
+    "Oscar",
+    "Pat",
+    "Quinn",
+    "Rita",
+    "Steve",
+    "Tina",
+    "Ursula",
+    "Victor",
+    "Wendy",
+    "Xander",
 ]
 
 ENTITY_TYPES = ["person", "project", "tool", "concept", "team", "service"]
 
 PREDICATES = [
-    "works_on", "manages", "reports_to", "collaborates_with", "created",
-    "maintains", "uses", "depends_on", "replaced", "reviewed", "deployed",
-    "tested", "documented", "mentors", "leads", "contributes_to",
+    "works_on",
+    "manages",
+    "reports_to",
+    "collaborates_with",
+    "created",
+    "maintains",
+    "uses",
+    "depends_on",
+    "replaced",
+    "reviewed",
+    "deployed",
+    "tested",
+    "documented",
+    "mentors",
+    "leads",
+    "contributes_to",
 ]
 
 
@@ -136,13 +278,19 @@ class PalaceDataGenerator:
             room = self.rng.choice(self.rooms_by_wing[wing])
             needle_id = f"NEEDLE_{i:04d}"
             content = f"{needle_id}: {topic}. This is a unique planted needle for recall benchmarking at scale."
-            self.needles.append({
-                "id": needle_id,
-                "content": content,
-                "wing": wing,
-                "room": room,
-                "query": topic.split(" uses ")[0] if " uses " in topic else topic.split(" set to ")[0] if " set to " in topic else topic[:60],
-            })
+            self.needles.append(
+                {
+                    "id": needle_id,
+                    "content": content,
+                    "wing": wing,
+                    "room": room,
+                    "query": topic.split(" uses ")[0]
+                    if " uses " in topic
+                    else topic.split(" set to ")[0]
+                    if " set to " in topic
+                    else topic[:60],
+                }
+            )
 
     def _random_text(self, min_chars=600, max_chars=900):
         """Generate a random text block of realistic content."""
@@ -159,21 +307,25 @@ class PalaceDataGenerator:
                     component=self.rng.choice(ROOM_NAMES),
                     task=self.rng.choice(TECH_TERMS),
                     month=self.rng.choice(["January", "February", "March", "April", "May"]),
-                    quality=self.rng.choice(["performance", "readability", "test coverage", "latency"]),
+                    quality=self.rng.choice(
+                        ["performance", "readability", "test coverage", "latency"]
+                    ),
                     decision=self.rng.choice(TECH_TERMS),
                     condition=self.rng.choice(TECH_TERMS) + " is null",
                     cause=self.rng.choice(["race condition", "null pointer", "timeout", "OOM"]),
                     fix="adding " + self.rng.choice(TECH_TERMS),
                     test_file=f"test_{self.rng.choice(ROOM_NAMES)}.py",
                     old_tech=self.rng.choice(["MySQL", "Flask", "REST", "Jenkins"]),
-                    new_tech=self.rng.choice(["PostgreSQL", "FastAPI", "GraphQL", "GitHub Actions"]),
+                    new_tech=self.rng.choice(
+                        ["PostgreSQL", "FastAPI", "GraphQL", "GitHub Actions"]
+                    ),
                     reason=self.rng.choice(TECH_TERMS),
-                    date=f"2025-{self.rng.randint(1,12):02d}-{self.rng.randint(1,28):02d}",
+                    date=f"2025-{self.rng.randint(1, 12):02d}-{self.rng.randint(1, 28):02d}",
                     percent=self.rng.randint(10, 80),
                     topic=self.rng.choice(TECH_TERMS),
                     person=self.rng.choice(ENTITY_NAMES),
                     action=self.rng.choice(["refactor", "migrate", "optimize", "test"]),
-                    deadline=f"2025-{self.rng.randint(1,12):02d}-{self.rng.randint(1,28):02d}",
+                    deadline=f"2025-{self.rng.randint(1, 12):02d}-{self.rng.randint(1, 28):02d}",
                     followup=self.rng.choice(TECH_TERMS),
                     feature_name=self.rng.choice(TECH_TERMS),
                     capability=self.rng.choice(TECH_TERMS),
@@ -182,7 +334,12 @@ class PalaceDataGenerator:
                 )
             else:
                 words = self.rng.sample(TECH_TERMS, min(5, len(TECH_TERMS)))
-                text = " ".join(words) + ". " + self.rng.choice(TECH_TERMS) + " implementation details follow.\n"
+                text = (
+                    " ".join(words)
+                    + ". "
+                    + self.rng.choice(TECH_TERMS)
+                    + " implementation details follow.\n"
+                )
             parts.append(text)
             total += len(text)
         return "\n".join(parts)[:max_chars]
@@ -270,15 +427,24 @@ class PalaceDataGenerator:
                 needle_id = f"drawer_{needle['wing']}_{needle['room']}_{hashlib.md5(needle['id'].encode()).hexdigest()[:16]}"
                 docs.append(needle["content"])
                 ids.append(needle_id)
-                metas.append({
-                    "wing": needle["wing"],
-                    "room": needle["room"],
-                    "source_file": f"needle_{needle['id']}.txt",
-                    "chunk_index": 0,
-                    "added_by": "benchmark",
-                    "filed_at": datetime.now().isoformat(),
-                })
-                needle_info.append({"id": needle_id, "query": needle["query"], "wing": needle["wing"], "room": needle["room"]})
+                metas.append(
+                    {
+                        "wing": needle["wing"],
+                        "room": needle["room"],
+                        "source_file": f"needle_{needle['id']}.txt",
+                        "chunk_index": 0,
+                        "added_by": "benchmark",
+                        "filed_at": datetime.now().isoformat(),
+                    }
+                )
+                needle_info.append(
+                    {
+                        "id": needle_id,
+                        "query": needle["query"],
+                        "wing": needle["wing"],
+                        "room": needle["room"],
+                    }
+                )
 
         # Fill remaining drawers with realistic content
         remaining = n_drawers - len(docs)
@@ -291,14 +457,16 @@ class PalaceDataGenerator:
 
             docs.append(content)
             ids.append(drawer_id)
-            metas.append({
-                "wing": wing,
-                "room": room,
-                "source_file": f"generated_{i:06d}.txt",
-                "chunk_index": i % 10,
-                "added_by": "benchmark",
-                "filed_at": datetime.now().isoformat(),
-            })
+            metas.append(
+                {
+                    "wing": wing,
+                    "room": room,
+                    "source_file": f"generated_{i:06d}.txt",
+                    "chunk_index": i % 10,
+                    "added_by": "benchmark",
+                    "filed_at": datetime.now().isoformat(),
+                }
+            )
 
             # Flush in batches
             if len(docs) >= batch_size:
@@ -351,7 +519,9 @@ class PalaceDataGenerator:
             valid_to = None
             if self.rng.random() < 0.3:
                 end_offset = self.rng.randint(30, 365)
-                valid_to = (base_date + timedelta(days=days_offset + end_offset)).strftime("%Y-%m-%d")
+                valid_to = (base_date + timedelta(days=days_offset + end_offset)).strftime(
+                    "%Y-%m-%d"
+                )
             triples.append((subject, predicate, obj, valid_from, valid_to))
 
         return entities, triples
@@ -371,24 +541,28 @@ class PalaceDataGenerator:
         # Half are needle queries (known-good answers)
         n_needle = min(n_queries // 2, len(self.needles))
         for needle in self.needles[:n_needle]:
-            queries.append({
-                "query": needle["query"],
-                "expected_wing": needle["wing"],
-                "expected_room": needle["room"],
-                "needle_id": needle["id"],
-                "is_needle": True,
-            })
+            queries.append(
+                {
+                    "query": needle["query"],
+                    "expected_wing": needle["wing"],
+                    "expected_room": needle["room"],
+                    "needle_id": needle["id"],
+                    "is_needle": True,
+                }
+            )
 
         # Other half are generic queries (measure latency, not recall)
         n_generic = n_queries - n_needle
         for _ in range(n_generic):
-            queries.append({
-                "query": self.rng.choice(TECH_TERMS) + " " + self.rng.choice(TECH_TERMS),
-                "expected_wing": None,
-                "expected_room": None,
-                "needle_id": None,
-                "is_needle": False,
-            })
+            queries.append(
+                {
+                    "query": self.rng.choice(TECH_TERMS) + " " + self.rng.choice(TECH_TERMS),
+                    "expected_wing": None,
+                    "expected_room": None,
+                    "needle_id": None,
+                    "is_needle": False,
+                }
+            )
 
         self.rng.shuffle(queries)
         return queries

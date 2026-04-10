@@ -63,7 +63,9 @@ class TestSearchMemoryProfile:
         record_metric("memory_search", "rss_end_mb", round(end_rss, 2))
         record_metric("memory_search", "rss_growth_mb", round(growth, 2))
         record_metric("memory_search", "n_calls", n_calls)
-        record_metric("memory_search", "growth_per_100_calls_mb", round(growth / (n_calls / 100), 2))
+        record_metric(
+            "memory_search", "growth_per_100_calls_mb", round(growth / (n_calls / 100), 2)
+        )
 
 
 @pytest.mark.benchmark
@@ -166,11 +168,13 @@ class TestHeapSnapshot:
         stats = snap_after.compare_to(snap_before, "lineno")
         top_allocators = []
         for stat in stats[:10]:
-            top_allocators.append({
-                "file": str(stat.traceback),
-                "size_kb": round(stat.size / 1024, 1),
-                "count": stat.count,
-            })
+            top_allocators.append(
+                {
+                    "file": str(stat.traceback),
+                    "size_kb": round(stat.size / 1024, 1),
+                    "count": stat.count,
+                }
+            )
 
         total_growth_kb = sum(s["size_kb"] for s in top_allocators)
         record_metric("heap_search", "top_10_growth_kb", round(total_growth_kb, 1))

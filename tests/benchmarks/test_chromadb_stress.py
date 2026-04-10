@@ -143,7 +143,10 @@ class TestBulkInsertPerformance:
             batch_end = min(batch_start + batch_size, n_docs)
             batch_docs = contents[batch_start:batch_end]
             batch_ids = [f"batch_{i}" for i in range(batch_start, batch_end)]
-            batch_metas = [{"wing": "test", "room": "bench", "chunk_index": i} for i in range(batch_start, batch_end)]
+            batch_metas = [
+                {"wing": "test", "room": "bench", "chunk_index": i}
+                for i in range(batch_start, batch_end)
+            ]
             col_batch.add(documents=batch_docs, ids=batch_ids, metadatas=batch_metas)
         batched_ms = (time.perf_counter() - start) * 1000
 

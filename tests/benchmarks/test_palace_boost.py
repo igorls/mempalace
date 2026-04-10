@@ -123,8 +123,12 @@ class TestFilterLatencyBenefit:
         record_metric("filter_latency", "avg_wing_filtered_ms", round(avg_wing, 1))
         record_metric("filter_latency", "avg_room_filtered_ms", round(avg_room, 1))
         if avg_none > 0:
-            record_metric("filter_latency", "wing_speedup_pct", round((1 - avg_wing / avg_none) * 100, 1))
-            record_metric("filter_latency", "room_speedup_pct", round((1 - avg_room / avg_none) * 100, 1))
+            record_metric(
+                "filter_latency", "wing_speedup_pct", round((1 - avg_wing / avg_none) * 100, 1)
+            )
+            record_metric(
+                "filter_latency", "room_speedup_pct", round((1 - avg_room / avg_none) * 100, 1)
+            )
 
 
 @pytest.mark.benchmark

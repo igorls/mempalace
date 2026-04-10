@@ -77,9 +77,7 @@ class TestSearchRecallAtScale:
         total_needle_queries = min(10, len(needle_info))
 
         for needle in needle_info[:total_needle_queries]:
-            result = search_memories(
-                needle["query"], palace_path=palace_path, n_results=10
-            )
+            result = search_memories(needle["query"], palace_path=palace_path, n_results=10)
             if "error" in result:
                 continue
 
@@ -150,8 +148,12 @@ class TestSearchFilteredVsUnfiltered:
         record_metric("search_filter", "avg_unfiltered_ms", round(avg_unfiltered, 1))
         record_metric("search_filter", "avg_filtered_ms", round(avg_filtered, 1))
         record_metric("search_filter", "latency_improvement_pct", round(latency_improvement, 1))
-        record_metric("search_filter", "unfiltered_recall_at_5", round(unfiltered_hits / max(n_queries, 1), 3))
-        record_metric("search_filter", "filtered_recall_at_5", round(filtered_hits / max(n_queries, 1), 3))
+        record_metric(
+            "search_filter", "unfiltered_recall_at_5", round(unfiltered_hits / max(n_queries, 1), 3)
+        )
+        record_metric(
+            "search_filter", "filtered_recall_at_5", round(filtered_hits / max(n_queries, 1), 3)
+        )
 
 
 @pytest.mark.benchmark
@@ -167,9 +169,16 @@ class TestConcurrentSearch:
         from mempalace.searcher import search_memories
 
         queries = [
-            "authentication", "database", "deployment", "error handling",
-            "testing", "monitoring", "caching", "middleware",
-            "serialization", "validation",
+            "authentication",
+            "database",
+            "deployment",
+            "error handling",
+            "testing",
+            "monitoring",
+            "caching",
+            "middleware",
+            "serialization",
+            "validation",
         ] * 3  # 30 total queries
 
         def run_search(query):

@@ -96,8 +96,7 @@ def pytest_terminal_summary(terminalreporter, config):
     if not report_path:
         return
 
-    # Collect results from the session fixture if available
-    # The results are written by individual tests via bench_results fixture
+    # Collect results written by individual tests via record_metric()
     import platform
     import subprocess
 
@@ -129,7 +128,7 @@ def pytest_terminal_summary(terminalreporter, config):
         "results": {},
     }
 
-    # Read results from a temp file written by the bench_results fixture
+    # Read results from the temp file written by record_metric()
     results_file = os.path.join(tempfile.gettempdir(), "mempalace_bench_results.json")
     if os.path.exists(results_file):
         try:
