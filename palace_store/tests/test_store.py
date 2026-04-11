@@ -78,9 +78,7 @@ def test_wing_filter_limits_shards(store):
     """A wing filter must not return drawers from other wings."""
     vecs = _random_vectors(20, seed=2)
     ids = [f"d{i}" for i in range(20)]
-    metas = [
-        {"wing": "alpha" if i < 10 else "beta", "room": "r1"} for i in range(20)
-    ]
+    metas = [{"wing": "alpha" if i < 10 else "beta", "room": "r1"} for i in range(20)]
     texts = [f"t{i}" for i in range(20)]
     store.upsert(ids, vecs, metas, texts)
 
@@ -95,10 +93,7 @@ def test_wing_filter_limits_shards(store):
 def test_room_filter_applies_post_shard(store):
     vecs = _random_vectors(30, seed=3)
     ids = [f"d{i}" for i in range(30)]
-    metas = [
-        {"wing": "alpha", "room": "r_even" if i % 2 == 0 else "r_odd"}
-        for i in range(30)
-    ]
+    metas = [{"wing": "alpha", "room": "r_even" if i % 2 == 0 else "r_odd"} for i in range(30)]
     texts = [f"t{i}" for i in range(30)]
     store.upsert(ids, vecs, metas, texts)
 
@@ -197,9 +192,7 @@ def test_store_survives_reopen(tmp_path):
     path = tmp_path / "palace.store"
     vecs = _random_vectors(25, seed=9)
     ids = [f"d{i}" for i in range(25)]
-    metas = [
-        {"wing": "alpha" if i < 12 else "beta", "room": "r"} for i in range(25)
-    ]
+    metas = [{"wing": "alpha" if i < 12 else "beta", "room": "r"} for i in range(25)]
     texts = [f"t{i}" for i in range(25)]
 
     s1 = PalaceStore(path)
@@ -357,10 +350,15 @@ def test_room_ids_stable_across_reopen(tmp_path):
     path = tmp_path / "palace.store"
     v = _random_vectors(2, seed=31)
     s1 = PalaceStore(path)
-    s1.upsert(["a", "b"], v, [
-        {"wing": "alpha", "room": "first"},
-        {"wing": "alpha", "room": "second"},
-    ], ["t1", "t2"])
+    s1.upsert(
+        ["a", "b"],
+        v,
+        [
+            {"wing": "alpha", "room": "first"},
+            {"wing": "alpha", "room": "second"},
+        ],
+        ["t1", "t2"],
+    )
     id_first = s1._room_name_to_id["first"]
     id_second = s1._room_name_to_id["second"]
     s1.close()
@@ -445,9 +443,7 @@ def test_parallel_query_matches_sequential(tmp_path):
     path_par = tmp_path / "par"
     vecs = _random_vectors(200, seed=34)
     ids = [f"d{i}" for i in range(200)]
-    metas = [
-        {"wing": f"wing_{i % 5}", "room": f"room_{i % 7}"} for i in range(200)
-    ]
+    metas = [{"wing": f"wing_{i % 5}", "room": f"room_{i % 7}"} for i in range(200)]
     texts = [f"t{i}" for i in range(200)]
 
     seq = PalaceStore(path_seq)
@@ -457,33 +453,31 @@ def test_parallel_query_matches_sequential(tmp_path):
         par.upsert(ids, vecs, metas, texts)
 
         rng = np.random.default_rng(77)
-        queries = l2_normalize(
-            rng.standard_normal((20, VECTOR_DIM), dtype=np.float32)
-        )
+        queries = l2_normalize(rng.standard_normal((20, VECTOR_DIM), dtype=np.float32))
 
         # Unfiltered: fans across all 5 wings → parallel path active
         for i, q in enumerate(queries):
             s_hits = seq.query(q, k=10)
             p_hits = par.query(q, k=10)
-            assert [h.id for h in s_hits] == [h.id for h in p_hits], (
-                f"unfiltered mismatch on query {i}"
-            )
+            assert [h.id for h in s_hits] == [
+                h.id for h in p_hits
+            ], f"unfiltered mismatch on query {i}"
 
         # Wing-filtered: single shard → still goes through _score_shard
         for i, q in enumerate(queries):
             s_hits = seq.query(q, k=10, where={"wing": "wing_2"})
             p_hits = par.query(q, k=10, where={"wing": "wing_2"})
-            assert [h.id for h in s_hits] == [h.id for h in p_hits], (
-                f"wing-filter mismatch on query {i}"
-            )
+            assert [h.id for h in s_hits] == [
+                h.id for h in p_hits
+            ], f"wing-filter mismatch on query {i}"
 
         # Wing + room: int-id comparison path
         for i, q in enumerate(queries):
             s_hits = seq.query(q, k=5, where={"wing": "wing_2", "room": "room_3"})
             p_hits = par.query(q, k=5, where={"wing": "wing_2", "room": "room_3"})
-            assert [h.id for h in s_hits] == [h.id for h in p_hits], (
-                f"wing+room mismatch on query {i}"
-            )
+            assert [h.id for h in s_hits] == [
+                h.id for h in p_hits
+            ], f"wing+room mismatch on query {i}"
     finally:
         seq.close()
         par.close()
@@ -492,14 +486,13 @@ def test_parallel_query_matches_sequential(tmp_path):
 def test_parallel_query_executor_lazy(tmp_path):
     """Executor must not be created until a parallel-eligible query fires."""
     v = _random_vectors(2, seed=35)
-    store = PalaceStore(
-        tmp_path / "palace.store", parallel_query=True, max_workers=2
-    )
+    store = PalaceStore(tmp_path / "palace.store", parallel_query=True, max_workers=2)
     try:
         # No shards → no executor created yet
         assert store._executor is None
         store.upsert(
-            ["a", "b"], v,
+            ["a", "b"],
+            v,
             [{"wing": "w1", "room": "r"}, {"wing": "w2", "room": "r"}],
             ["t", "t"],
         )
@@ -527,9 +520,7 @@ def test_parallel_query_executor_lazy(tmp_path):
 def test_disk_bytes_breakdown(store):
     vecs = _random_vectors(100, seed=10)
     ids = [f"d{i}" for i in range(100)]
-    metas = [
-        {"wing": "alpha" if i < 50 else "beta", "room": "r"} for i in range(100)
-    ]
+    metas = [{"wing": "alpha" if i < 50 else "beta", "room": "r"} for i in range(100)]
     texts = ["t" for _ in range(100)]
     store.upsert(ids, vecs, metas, texts)
 

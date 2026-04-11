@@ -113,9 +113,7 @@ class VectorShard:
             # Drop the old mapping before creating a new one so the file can
             # grow without aliasing an obsolete window.
             self._mmap = None
-            self._mmap = np.memmap(
-                self.path, dtype=VECTOR_DTYPE, mode="r", shape=(n, VECTOR_DIM)
-            )
+            self._mmap = np.memmap(self.path, dtype=VECTOR_DTYPE, mode="r", shape=(n, VECTOR_DIM))
         return self._mmap
 
     def _invalidate_mmap(self) -> None:
@@ -258,9 +256,7 @@ class VectorShardI8:
             return np.empty((0, VECTOR_DIM), dtype=np.int8)
         if self._i8_mmap is None or self._i8_mmap.shape[0] != n:
             self._i8_mmap = None
-            self._i8_mmap = np.memmap(
-                self.vec_path, dtype=np.int8, mode="r", shape=(n, VECTOR_DIM)
-            )
+            self._i8_mmap = np.memmap(self.vec_path, dtype=np.int8, mode="r", shape=(n, VECTOR_DIM))
         return self._i8_mmap
 
     def scales(self) -> np.ndarray:
@@ -270,9 +266,7 @@ class VectorShardI8:
             return np.empty(0, dtype=np.float32)
         if self._scl_mmap is None or self._scl_mmap.shape[0] != n:
             self._scl_mmap = None
-            self._scl_mmap = np.memmap(
-                self.scl_path, dtype=np.float32, mode="r", shape=(n,)
-            )
+            self._scl_mmap = np.memmap(self.scl_path, dtype=np.float32, mode="r", shape=(n,))
         return self._scl_mmap
 
     def _invalidate_mmap(self) -> None:
@@ -389,9 +383,7 @@ class PalaceStore:
         blas_threads: int | None = 1,
     ):
         if dtype not in ("float32", "int8"):
-            raise ValueError(
-                f"dtype must be 'float32' or 'int8', not {dtype!r}"
-            )
+            raise ValueError(f"dtype must be 'float32' or 'int8', not {dtype!r}")
         self.root = Path(path)
         self.root.mkdir(parents=True, exist_ok=True)
         (self.root / "vectors").mkdir(exist_ok=True)
@@ -548,9 +540,7 @@ class PalaceStore:
         existing = self._room_name_to_id.get(name)
         if existing is not None:
             return existing
-        cur = self._conn.execute(
-            "INSERT INTO room_ids (name) VALUES (?)", (name,)
-        )
+        cur = self._conn.execute("INSERT INTO room_ids (name) VALUES (?)", (name,))
         room_id = int(cur.lastrowid)
         self._room_name_to_id[name] = room_id
         self._room_id_to_name[room_id] = name
@@ -672,9 +662,7 @@ class PalaceStore:
         return shard
 
     def _active_wings(self) -> list[str]:
-        rows = self._conn.execute(
-            "SELECT DISTINCT wing FROM drawers WHERE deleted = 0"
-        ).fetchall()
+        rows = self._conn.execute("SELECT DISTINCT wing FROM drawers WHERE deleted = 0").fetchall()
         return [r["wing"] for r in rows]
 
     # ── write path ────────────────────────────────────────────────────
@@ -742,9 +730,7 @@ class PalaceStore:
                     shard = self._shard_for(wing)
                     wing_vecs = np.ascontiguousarray(vectors[indices])
                     first_row = shard.append(wing_vecs)
-                    rooms_for_block = [
-                        metadatas[orig_i].get("room", "") for orig_i in indices
-                    ]
+                    rooms_for_block = [metadatas[orig_i].get("room", "") for orig_i in indices]
                     self._extend_shard_indexes(wing, rooms_for_block)
 
                     for local_i, orig_i in enumerate(indices):
@@ -763,9 +749,7 @@ class PalaceStore:
                                 meta.get("chunk_index"),
                                 first_row + local_i,
                                 texts[orig_i],
-                                json.dumps(extras, separators=(",", ":"))
-                                if extras
-                                else None,
+                                json.dumps(extras, separators=(",", ":")) if extras else None,
                             )
                         )
 
@@ -832,10 +816,7 @@ class PalaceStore:
         #       out shards across workers without nested parallelism
         #       (each BLAS call uses one thread, our pool owns the rest)
         candidates: list[tuple[float, str, int]] = []
-        if (
-            self._parallel_query
-            and len(wings) >= _PARALLEL_MIN_SHARDS
-        ):
+        if self._parallel_query and len(wings) >= _PARALLEL_MIN_SHARDS:
             executor = self._get_executor()
             futures = [
                 executor.submit(
@@ -851,11 +832,7 @@ class PalaceStore:
                 candidates.extend(fut.result())
         else:
             for wing in wings:
-                candidates.extend(
-                    self._score_shard(
-                        wing, query_vector, room_filter_id, k
-                    )
-                )
+                candidates.extend(self._score_shard(wing, query_vector, room_filter_id, k))
 
         if not candidates:
             return []
@@ -1023,13 +1000,9 @@ class PalaceStore:
         # threadpool_limits() applies the limit on construction; the
         # returned object is a CM whose __exit__ restores the prior
         # state. Keeping it alive keeps the limit active.
-        self._blas_limiter = threadpool_limits(
-            limits=self._blas_threads, user_api="blas"
-        )
+        self._blas_limiter = threadpool_limits(limits=self._blas_threads, user_api="blas")
 
-    def _lookup_candidates(
-        self, keys: list[tuple[str, int]]
-    ) -> list[sqlite3.Row]:
+    def _lookup_candidates(self, keys: list[tuple[str, int]]) -> list[sqlite3.Row]:
         if not keys:
             return []
         values_sql = ",".join("(?, ?)" for _ in keys)
@@ -1076,8 +1049,7 @@ class PalaceStore:
             params: list[Any] = list(ids)
         elif where:
             sql, params = self._build_where_sql(
-                "SELECT id, wing, room, source_file, chunk_index, text, extra_json "
-                "FROM drawers",
+                "SELECT id, wing, room, source_file, chunk_index, text, extra_json " "FROM drawers",
                 where,
             )
         else:
@@ -1129,17 +1101,12 @@ class PalaceStore:
                 f"WHERE deleted = 0 AND id IN ({placeholders})"
             )
             update_sql = (
-                "UPDATE drawers SET deleted = 1 "
-                f"WHERE deleted = 0 AND id IN ({placeholders})"
+                "UPDATE drawers SET deleted = 1 " f"WHERE deleted = 0 AND id IN ({placeholders})"
             )
             params: list[Any] = list(ids)
         else:
-            select_sql, params = self._build_where_sql(
-                "SELECT wing, shard_row FROM drawers", where
-            )
-            update_sql, _ = self._build_where_sql(
-                "UPDATE drawers SET deleted = 1", where
-            )
+            select_sql, params = self._build_where_sql("SELECT wing, shard_row FROM drawers", where)
+            update_sql, _ = self._build_where_sql("UPDATE drawers SET deleted = 1", where)
 
         with self._lock:
             affected = self._conn.execute(select_sql, params).fetchall()
@@ -1150,9 +1117,7 @@ class PalaceStore:
             return cur.rowcount
 
     def count(self) -> int:
-        return self._conn.execute(
-            "SELECT COUNT(*) FROM drawers WHERE deleted = 0"
-        ).fetchone()[0]
+        return self._conn.execute("SELECT COUNT(*) FROM drawers WHERE deleted = 0").fetchone()[0]
 
     def truncate(self) -> None:
         """Wipe every drawer and every shard file in one shot.
@@ -1230,9 +1195,7 @@ class PalaceStore:
         params: list[Any] = []
         for k, v in where.items():
             if k not in _FILTERABLE_COLS:
-                raise ValueError(
-                    f"cannot filter on {k!r}; allowed: {sorted(_FILTERABLE_COLS)}"
-                )
+                raise ValueError(f"cannot filter on {k!r}; allowed: {sorted(_FILTERABLE_COLS)}")
             clauses.append(f"{k} = ?")
             params.append(v)
         return f"{prefix} WHERE {' AND '.join(clauses)}", params

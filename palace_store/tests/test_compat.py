@@ -60,9 +60,7 @@ def col(client):
 
 
 def test_client_open_and_count_empty(client):
-    col = client.get_or_create_collection(
-        "mempalace_drawers", embedding_function=stub_embedder
-    )
+    col = client.get_or_create_collection("mempalace_drawers", embedding_function=stub_embedder)
     assert col.count() == 0
 
 

@@ -186,8 +186,7 @@ def _translate_where(where: dict[str, Any] | None) -> dict[str, Any] | None:
                 for k, v in inner.items():
                     if k in merged and merged[k] != v:
                         raise ValueError(
-                            f"conflicting AND clauses on key {k!r}: "
-                            f"{merged[k]!r} vs {v!r}"
+                            f"conflicting AND clauses on key {k!r}: " f"{merged[k]!r} vs {v!r}"
                         )
                     merged[k] = v
         return merged
@@ -227,9 +226,7 @@ def _to_f32_matrix(embeddings: Any) -> np.ndarray:
     if arr.ndim == 1:
         arr = arr.reshape(1, -1)
     if arr.shape[1] != VECTOR_DIM:
-        raise ValueError(
-            f"expected embedding dim {VECTOR_DIM}, got {arr.shape[1]}"
-        )
+        raise ValueError(f"expected embedding dim {VECTOR_DIM}, got {arr.shape[1]}")
     return np.ascontiguousarray(arr)
 
 
@@ -347,9 +344,7 @@ class Collection:
         include: list[str] | None = None,
     ) -> dict[str, list[Any]]:
         if where_document is not None:
-            raise NotImplementedError(
-                "palace_store.compat does not support where_document"
-            )
+            raise NotImplementedError("palace_store.compat does not support where_document")
 
         if query_embeddings is None:
             if query_texts is None:
@@ -421,14 +416,10 @@ class Collection:
         where_document: dict[str, Any] | None = None,
     ) -> dict[str, list[Any]]:
         if where_document is not None:
-            raise NotImplementedError(
-                "palace_store.compat does not support where_document"
-            )
+            raise NotImplementedError("palace_store.compat does not support where_document")
 
         palace_where = _translate_where(where)
-        rows = self._store.get(
-            palace_where, ids=ids, limit=limit, offset=offset
-        )
+        rows = self._store.get(palace_where, ids=ids, limit=limit, offset=offset)
 
         want_docs = include is None or "documents" in include
         want_meta = include is None or "metadatas" in include
@@ -475,13 +466,25 @@ class PersistentClient:
         settings: Any = None,
         *,
         dtype: str = "float32",
+        parallel_query: bool = False,
+        max_workers: int | None = None,
+        blas_threads: int | None = 1,
     ):
         # Chroma's Settings are ignored — we don't implement telemetry,
-        # auth, or multi-tenancy.
+        # auth, or multi-tenancy. The PalaceStore-specific kwargs
+        # (parallel_query, max_workers, blas_threads) are passed
+        # through so callers going through the shim can still tune the
+        # underlying store.
         _ = settings
         self._path = Path(path)
         self._path.mkdir(parents=True, exist_ok=True)
-        self._store = PalaceStore(self._path, dtype=dtype)
+        self._store = PalaceStore(
+            self._path,
+            dtype=dtype,
+            parallel_query=parallel_query,
+            max_workers=max_workers,
+            blas_threads=blas_threads,
+        )
         self._collections: dict[str, Collection] = {}
         # Persisted across process restarts. Chroma distinguishes between
         # "collection doesn't exist" and "collection is empty"; mempalace
@@ -493,9 +496,7 @@ class PersistentClient:
         self._existing: set[str] = set()
         if self._existing_collections_file.exists():
             try:
-                self._existing = set(
-                    json.loads(self._existing_collections_file.read_text())
-                )
+                self._existing = set(json.loads(self._existing_collections_file.read_text()))
             except Exception:
                 self._existing = set()
 
@@ -504,9 +505,7 @@ class PersistentClient:
             return
         self._existing.add(name)
         try:
-            self._existing_collections_file.write_text(
-                json.dumps(sorted(self._existing))
-            )
+            self._existing_collections_file.write_text(json.dumps(sorted(self._existing)))
         except Exception:
             # Non-fatal: worst case get_collection will raise until we
             # successfully persist on a later create call.
@@ -531,9 +530,7 @@ class PersistentClient:
     ) -> Collection:
         self._mark_existing(name)
         if name not in self._collections:
-            self._collections[name] = self._build_collection(
-                name, embedding_function, metadata
-            )
+            self._collections[name] = self._build_collection(name, embedding_function, metadata)
         return self._collections[name]
 
     def get_collection(
@@ -549,9 +546,7 @@ class PersistentClient:
                 f"get_or_create_collection() first."
             )
         if name not in self._collections:
-            self._collections[name] = self._build_collection(
-                name, embedding_function, None
-            )
+            self._collections[name] = self._build_collection(name, embedding_function, None)
         return self._collections[name]
 
     def create_collection(
@@ -578,9 +573,7 @@ class PersistentClient:
             del self._collections[name]
         self._existing.discard(name)
         try:
-            self._existing_collections_file.write_text(
-                json.dumps(sorted(self._existing))
-            )
+            self._existing_collections_file.write_text(json.dumps(sorted(self._existing)))
         except Exception:
             pass
         self._store.truncate()
