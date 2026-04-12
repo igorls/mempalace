@@ -6,7 +6,12 @@ __pycache__/
 .pytest_cache/
 mempal.yaml
 .a5c/
-.claude/
+# Ignore .claude/ contents, except allow tracking shared skills
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/triage-issues/
+!.claude/skills/triage-issues/**
 benchmarks/results_*.jsonl
 
 # Environment
@@ -35,3 +40,6 @@ venv/
 
 # ChromaDB local data
 *.sqlite3-journal
+
+# Triage tool cache (fetched issue/PR data, rotated every 6h)
+tools/.cache/
